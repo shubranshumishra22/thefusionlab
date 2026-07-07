@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Lenis from 'lenis';
+import defaultTables from '../data/tables.json';
 
 function App() {
-  const [tables, setTables] = useState([]);
+  const [tables, setTables] = useState(defaultTables);
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // Expandable Menu Drawer state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Mobile Hamburger Sidebar state
@@ -10,8 +11,8 @@ function App() {
 
   // Reservation Form State
   const [reserveForm, setReserveForm] = useState({
-    tableId: '',
-    tableName: '',
+    tableId: defaultTables[0]?.id || '',
+    tableName: defaultTables[0]?.name || '',
     guestName: '',
     guestEmail: '',
     date: '',
