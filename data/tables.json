@@ -1,0 +1,26 @@
+[
+  {
+    "id": "fireside-hearth",
+    "name": "Fireside Hearth",
+    "description": "Cozy indoor seating positioned directly adjacent to our signature stone fireplace. Perfect for romantic dinners and warm acoustics.",
+    "capacity": 2,
+    "image": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=1200",
+    "experience": ["Complimentary Mulled Wine", "Lounge Access", "Dedicated Sommelier service"]
+  },
+  {
+    "id": "glass-dome-terrace",
+    "name": "Glass Dome Terrace",
+    "description": "Dine under the stars inside a private, heated glass dome on our mountain terrace. 360-degree views of the snow-capped peaks.",
+    "capacity": 4,
+    "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1200",
+    "experience": ["Private Heated Dome", "360-deg Mountain View", "Exquisite 5-course Tasting Menu access"]
+  },
+  {
+    "id": "pine-canopy-alcove",
+    "name": "Pine Canopy Alcove",
+    "description": "An elevated semi-private alcove constructed from aromatic cedar wood. Offers absolute privacy nestled among mature mountain pines.",
+    "capacity": 6,
+    "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=1200",
+    "experience": ["Cedarwood architecture", "Pine forest acoustics", "Family style alpine feast options"]
+  }
+]
