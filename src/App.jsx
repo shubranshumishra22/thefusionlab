@@ -222,7 +222,24 @@ function App() {
 
       {/* Hero Section */}
       <section className="hero">
-        <div className="hero-bg" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1920')` }}></div>
+        <div className="hero-bg" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1920')` }}>
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover'
+            }}
+          >
+            <source src="/background.mp4" type="video/mp4" />
+          </video>
+        </div>
         <div className="hero-content">
           <span className="hero-subtitle">High-Altitude Culinary Sanctuary • Kufri</span>
           <h1 className="hero-title">The Fusion Lab</h1>
