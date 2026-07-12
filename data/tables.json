@@ -1,26 +1,26 @@
 [
   {
     "id": "fireside-hearth",
-    "name": "Fireside Hearth",
-    "description": "Cozy indoor seating positioned directly adjacent to our signature stone fireplace. Perfect for romantic dinners and warm acoustics.",
-    "capacity": 2,
-    "image": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=1200",
-    "experience": ["Complimentary Mulled Wine", "Lounge Access", "Dedicated Sommelier service"]
+    "name": "The Fireside Hearth",
+    "vibe": "Warm Acoustics & Soft Hearth Glow",
+    "description": "Cozy indoor seating positioned directly adjacent to our signature stone fireplace. Unwind with warm acoustics, heavy knit blankets, and the rich aroma of freshly ground mountain espresso.",
+    "image": "/l2.jpg",
+    "experience": ["Fireside Warmth", "Heavy Knit Blankets", "Board Games & Library"]
   },
   {
     "id": "glass-dome-terrace",
-    "name": "Glass Dome Terrace",
-    "description": "Dine under the stars inside a private, heated glass dome on our mountain terrace. 360-degree views of the snow-capped peaks.",
-    "capacity": 4,
-    "image": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1200",
-    "experience": ["Private Heated Dome", "360-deg Mountain View", "Exquisite 5-course Tasting Menu access"]
+    "name": "The Panoramic Glass Dome",
+    "vibe": "Starlit Skies & 360° Alpine Vistas",
+    "description": "Sip your warm brew under the open sky inside a heated glass dome on our mountain terrace. Take in 360-degree views of Kufri's snow-capped peaks and mist-filled valleys.",
+    "image": "/l3.jpg",
+    "experience": ["Heated Glass Domes", "360° Mountain Vistas", "Panoramic Skylight"]
   },
   {
-    "id": "pine-canopy-alcove",
-    "name": "Pine Canopy Alcove",
-    "description": "An elevated semi-private alcove constructed from aromatic cedar wood. Offers absolute privacy nestled among mature mountain pines.",
-    "capacity": 6,
-    "image": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=1200",
-    "experience": ["Cedarwood architecture", "Pine forest acoustics", "Family style alpine feast options"]
+    "id": "pine-canopy-loft",
+    "name": "The Pine Canopy Loft",
+    "vibe": "Aromatic Cedar & Quiet Workspace",
+    "description": "An elevated quiet loft constructed from aromatic cedar wood. Nestled among tall mountain pines, it offers high-speed Wi-Fi and power outlets, making it the perfect remote work sanctuary or reading escape.",
+    "image": "/l4.jpg",
+    "experience": ["Cedarwood Loft", "High-Speed Wi-Fi", "Dedicated Workstations"]
   }
 ]

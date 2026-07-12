@@ -2,24 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import defaultTables from '../data/tables.json';
 
+// Google Business Reviews Profile Link (replaceable with your exact Google Place URL)
+const GOOGLE_REVIEWS_URL = 'https://search.google.com/local/writereview?placeid=ChIJo7X82q60EDkRlXQ77yJ7Zp4';
+
 function App() {
   const [tables, setTables] = useState(defaultTables);
+  const [instagramFeed, setInstagramFeed] = useState([]);
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // Expandable Menu Drawer state
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // Mobile Hamburger Sidebar state
   const [culinaryVisible, setCulinaryVisible] = useState(false); // Zoom reveal state
-
-  // Reservation Form State
-  const [reserveForm, setReserveForm] = useState({
-    tableId: defaultTables[0]?.id || '',
-    tableName: defaultTables[0]?.name || '',
-    guestName: '',
-    guestEmail: '',
-    date: '',
-    time: '19:00',
-    guestsCount: '2'
-  });
-  const [reserveSuccess, setReserveSuccess] = useState(false);
 
   // Eatery Menu Items (Mountain Tavern Culinary in Rupees)
   const menuItems = [
@@ -35,23 +27,26 @@ function App() {
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [orderSuccess, setOrderSuccess] = useState(false);
 
-  const reservationSectionRef = useRef(null);
   const zonesSectionRef = useRef(null);
   const gallerySectionRef = useRef(null);
   const culinarySectionRef = useRef(null); // Ref for Zoom Reveal
   const visitSectionRef = useRef(null);
 
-  // Fetch Seating Zones & Initialize Lenis Smooth Scroll
+  // Fetch Seating Zones, Instagram Feed & Initialize Lenis Smooth Scroll
   useEffect(() => {
     fetch('/api/tables')
       .then(res => res.json())
       .then(data => {
         setTables(data);
-        if (data.length > 0) {
-          setReserveForm(prev => ({ ...prev, tableId: data[0].id, tableName: data[0].name }));
-        }
       })
       .catch(err => console.error("Error fetching tables:", err));
+
+    fetch('/api/instagram')
+      .then(res => res.json())
+      .then(data => {
+        setInstagramFeed(data);
+      })
+      .catch(err => console.error("Error fetching instagram feed:", err));
 
     // Initialize Lenis
     const lenis = new Lenis({
@@ -91,47 +86,6 @@ function App() {
       lenis.destroy();
     };
   }, []);
-
-  // Select a seating zone from card
-  const selectZoneForBooking = (table) => {
-    setReserveForm(prev => ({
-      ...prev,
-      tableId: table.id,
-      tableName: table.name
-    }));
-    reservationSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // Submit Reservation Form
-  const handleReservationSubmit = async (e) => {
-    e.preventDefault();
-    if (!reserveForm.guestName || !reserveForm.date || !reserveForm.time) {
-      alert("Please fill all required fields.");
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/reserve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reserveForm)
-      });
-      const result = await response.json();
-      if (response.ok) {
-        setReserveSuccess(true);
-        // Speak voice simulation using browser Web Speech API
-        speakSimulatedCall(`Attention. A new table reservation has been received at The Fusion Lab. Guest ${reserveForm.guestName} has booked ${reserveForm.tableName} for ${reserveForm.guestsCount} guests.`);
-        setTimeout(() => setReserveSuccess(false), 8000);
-        // Reset name & email
-        setReserveForm(prev => ({ ...prev, guestName: '', guestEmail: '' }));
-      } else {
-        alert(result.error || "Reservation failed.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Error processing reservation.");
-    }
-  };
 
   // Cart quantity controls
   const addToCart = (item) => {
@@ -218,24 +172,13 @@ function App() {
     }
   };
 
-  // Mountain & Scenic Gallery URLs (updated stable URLs, total 6 items)
-  const scenicImages = [
-    { url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800', title: 'Grand Kufri Alpine Ranges' },
-    { url: 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&q=80&w=800', title: 'Snowy Peak Vista' },
-    { url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&q=80&w=800', title: 'Valleys & Mists' },
-    { url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=800', title: 'Valley Sunset Horizon' },
-    { url: 'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&q=80&w=800', title: 'Alpine Pine Woodland' },
-    { url: 'https://images.unsplash.com/photo-1491555103944-7c647fd857e6?auto=format&fit=crop&q=80&w=800', title: 'High Summit Fog' }
-  ];
 
-  // Food Gallery URLs (total 6 items)
-  const foodImages = [
-    { url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=800', title: 'Fireside Wood Oven Roasted Lamb' },
-    { url: 'https://images.unsplash.com/photo-1543007630-9710e4a00a20?auto=format&fit=crop&q=80&w=800', title: 'Wild Porcini Mushroom Risotto' },
-    { url: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800', title: 'Grilled Mountain Brook Trout' },
-    { url: 'https://images.unsplash.com/photo-1560624052-449f5ddf0c31?auto=format&fit=crop&q=80&w=800', title: 'Artisanal Berry Tartlets' },
-    { url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800', title: 'Fireside Warm Hospitality' },
-    { url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800', title: 'Fresh Peak Plating' }
+
+  // Mountain & Scenic Gallery URLs (updated stable URLs, non-repeating with seating zones)
+  const scenicImages = [
+    { url: '/l1.jpg', title: 'Grand Kufri Alpine Ranges' },
+    { url: '/l5.jpg', title: 'Alpine Pine Woodland' },
+    { url: '/l6.jpg', title: 'High Summit Fog' }
   ];
 
   // Customer Reviews Data
@@ -259,6 +202,11 @@ function App() {
           <li><a href="#visit">Visit Us</a></li>
         </ul>
         <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          <a href="tel:9988502602" className="nav-phone-link" aria-label="Call Us" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '38px', height: '38px', color: 'var(--accent)', transition: 'all 0.3s ease' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </a>
           <button className="btn-book-nav" style={{ background: 'var(--accent)', color: 'var(--bg-primary)' }} onClick={() => setMenuOpen(true)}>
             Explore Menu
           </button>
@@ -296,8 +244,8 @@ function App() {
       <section className="section" id="about">
         <div className="story-grid">
           <div className="story-visuals">
-            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=1200" alt="Mountain Restaurant Kitchen" className="story-img-main" />
-            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=800" alt="Plated Dish" className="story-img-sub" />
+            <img src="/IMG_6147.jpg" alt="Mountain Restaurant Kitchen" className="story-img-main" />
+            <img src="/p5food.jpg" alt="Plated Dish" className="story-img-sub" />
           </div>
           <div className="story-content">
             <span className="section-subtitle">Our Mountain Eatery</span>
@@ -316,31 +264,27 @@ function App() {
       {/* 2. Dining Seating Zones Showcase */}
       <section className="section section-bg-alt" id="dining-zones" ref={zonesSectionRef}>
         <div className="section-header">
-          <span className="section-subtitle">Reserve Seating</span>
-          <h2 className="section-title">The Dining Zones</h2>
-          <p>Choose from three distinct dining layouts, each designed to evoke warmth, comfort, and premium alpine character.</p>
+          <span className="section-subtitle">Cafe Lounges</span>
+          <h2 className="section-title">Our Seating Corners</h2>
+          <p>Relax and unwind in our distinct cafe seating spaces—each curated to evoke warmth, comfort, and premium alpine character on a walk-in basis.</p>
         </div>
-        <div className="rooms-grid">
+        <div className="lounge-showcase">
           {tables.map(table => (
-            <div key={table.id} className="room-card hover-lift hover-scale">
-              <div className="room-image-wrapper">
-                <img src={table.image} alt={table.name} />
-                <div className="room-price-badge">Premium Experience</div>
-              </div>
-              <div className="room-details">
-                <h3>{table.name}</h3>
-                <p style={{ fontSize: '14px', flexGrow: 1 }}>{table.description}</p>
-                <div className="room-specs">
-                  <span>Up to {table.capacity} Guests</span>
+            <div key={table.id} className="lounge-row">
+              <div className="lounge-image-col">
+                <div className="lounge-image-wrapper">
+                  <img src={table.image} alt={table.name} />
                 </div>
-                <div className="room-amenities">
+              </div>
+              <div className="lounge-content-col">
+                <span className="lounge-vibe">{table.vibe}</span>
+                <h3 className="lounge-title">{table.name}</h3>
+                <p className="lounge-description">{table.description}</p>
+                <div className="lounge-amenities">
                   {table.experience.map((exp, idx) => (
-                    <span key={idx} className="amenity-tag">{exp}</span>
+                    <span key={idx} className="lounge-tag">{exp}</span>
                   ))}
                 </div>
-                <button className="btn-card" onClick={() => selectZoneForBooking(table)}>
-                  Select Zone
-                </button>
               </div>
             </div>
           ))}
@@ -384,145 +328,95 @@ function App() {
           </div>
         </div>
 
-        {/* Gastronomy Gallery - Scroll-driven Zoom Reveal & Marquee */}
-        <div ref={culinarySectionRef} className={`zoom-reveal-section ${culinaryVisible ? 'visible' : ''}`}>
-          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '26px', textAlign: 'center', marginBottom: '30px', color: 'var(--text-primary)' }}>
+        {/* Gastronomy Gallery - Scroll-driven Zoom Reveal & Instagram Feed */}
+        <div ref={culinarySectionRef} className={`zoom-reveal-section ${culinaryVisible ? 'visible' : ''}`} style={{ marginTop: '50px' }}>
+          <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '26px', textAlign: 'center', marginBottom: '10px', color: 'var(--text-primary)' }}>
             Alpine Culinary & Food Plates
           </h3>
-          <div className="marquee-container">
-            <div className="marquee-content" style={{ animationDuration: '45s' }}>
-              {foodImages.map((img, idx) => (
-                <div key={`food-1-${idx}`} className="marquee-item-gallery">
-                  <div className="room-image-wrapper" style={{ height: '300px', borderRadius: '8px', boxShadow: 'var(--shadow-floating)' }}>
-                    <img src={img.url} alt={img.title} />
+          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '30px' }}>
+            Upload your moments at The Fusion Lab, tag us <a href="https://instagram.com/thefusionlab__" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: '500' }}>@thefusionlab__</a>, and get featured on our website!
+          </p>
+          
+          {/* Instagram Post Feed Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px', maxWidth: '90%', margin: '0 auto', padding: '0' }}>
+            {instagramFeed.map(post => (
+              <a 
+                key={post.id} 
+                href={post.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="instagram-card hover-lift"
+                style={{ 
+                  background: 'var(--bg-secondary)', 
+                  border: '1px solid var(--border-light)', 
+                  borderRadius: '4px', 
+                  overflow: 'hidden', 
+                  textDecoration: 'none', 
+                  color: 'inherit',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+                }}
+              >
+                {/* Post Header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 15px', borderBottom: '1px solid var(--border-light)' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--accent)', color: 'var(--bg-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '12px' }}>
+                    FL
                   </div>
-                  <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px', fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'var(--text-primary)' }}>
-                    {img.title}
-                  </p>
-                </div>
-              ))}
-              {foodImages.map((img, idx) => (
-                <div key={`food-2-${idx}`} className="marquee-item-gallery">
-                  <div className="room-image-wrapper" style={{ height: '300px', borderRadius: '8px', boxShadow: 'var(--shadow-floating)' }}>
-                    <img src={img.url} alt={img.title} />
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontWeight: '600', fontSize: '13px', color: 'var(--text-primary)' }}>thefusionlab__</span>
+                    <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Kufri, Shimla</span>
                   </div>
-                  <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px', fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'var(--text-primary)' }}>
-                    {img.title}
-                  </p>
+                  <span style={{ marginLeft: 'auto', color: 'var(--accent)' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                  </span>
                 </div>
-              ))}
-            </div>
+                
+                {/* Post Image with Hover Overlay */}
+                <div className="room-image-wrapper" style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
+                  <img src={post.imageUrl} alt={post.caption} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div className="instagram-overlay" style={{ 
+                    position: 'absolute', 
+                    top: 0, left: 0, width: '100%', height: '100%', 
+                    background: 'rgba(0,0,0,0.5)', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', 
+                    color: '#fff', opacity: 0, transition: 'opacity 0.3s ease',
+                    fontWeight: 'bold', fontSize: '16px'
+                  }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      ❤️ {post.likes}
+                    </span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      💬 {post.comments}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Post Caption */}
+                <div style={{ padding: '15px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <p style={{ fontSize: '13px', lineHeight: '1.5', margin: 0, color: 'var(--text-primary)', WebkitLineClamp: 2, display: '-webkit-box', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                    <strong>thefusionlab__</strong> {post.caption}
+                  </p>
+                  <span style={{ fontSize: '10px', color: 'var(--text-secondary)', marginTop: 'auto' }}>
+                    {new Date(post.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 4. Booking Form Section */}
-      <section className="section section-bg-alt" id="reserve" ref={reservationSectionRef}>
-        <div className="section-header">
-          <span className="section-subtitle">Table Reservation</span>
-          <h2 className="section-title">Secure Your Table</h2>
-          <p>Reservations are highly recommended. Upon booking, the restaurant manager is notified immediately via SMS.</p>
-        </div>
-
-        <div className="booking-section-wrapper" style={{ background: 'var(--bg-primary)', boxShadow: 'var(--shadow-medium)' }}>
-          {reserveSuccess ? (
-            <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--accent)' }}>
-              <h3 style={{ fontSize: '28px', marginBottom: '15px' }}>Reservation Request Received</h3>
-              <p style={{ color: 'var(--text-primary)' }}>Your alpine table reservation has been requested. The manager has been alerted via SMS.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleReservationSubmit}>
-              <div className="form-group">
-                <label>Dining Zone</label>
-                <select 
-                  value={reserveForm.tableId} 
-                  onChange={(e) => {
-                    const selected = tables.find(t => t.id === e.target.value);
-                    setReserveForm(prev => ({ 
-                      ...prev, 
-                      tableId: e.target.value,
-                      tableName: selected ? selected.name : ''
-                    }));
-                  }}
-                >
-                  {tables.map(table => (
-                    <option key={table.id} value={table.id}>{table.name} (Max {table.capacity} guests)</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group-row">
-                <div className="form-group">
-                  <label>Full Name *</label>
-                  <input 
-                    type="text" 
-                    placeholder="E.g., Arthur Pendragon" 
-                    value={reserveForm.guestName}
-                    onChange={(e) => setReserveForm(prev => ({ ...prev, guestName: e.target.value }))}
-                    required 
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Email Address *</label>
-                  <input 
-                    type="email" 
-                    placeholder="E.g., arthur@camelot.com" 
-                    value={reserveForm.guestEmail}
-                    onChange={(e) => setReserveForm(prev => ({ ...prev, guestEmail: e.target.value }))}
-                    required 
-                  />
-                </div>
-              </div>
-
-              <div className="form-group-row">
-                <div className="form-group">
-                  <label>Date *</label>
-                  <input 
-                    type="date" 
-                    value={reserveForm.date}
-                    onChange={(e) => setReserveForm(prev => ({ ...prev, date: e.target.value }))}
-                    required 
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Time *</label>
-                  <input 
-                    type="time" 
-                    value={reserveForm.time}
-                    onChange={(e) => setReserveForm(prev => ({ ...prev, time: e.target.value }))}
-                    required 
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Guests Count</label>
-                <select 
-                  value={reserveForm.guestsCount} 
-                  onChange={(e) => setReserveForm(prev => ({ ...prev, guestsCount: e.target.value }))}
-                >
-                  <option value="1">1 Guest</option>
-                  <option value="2">2 Guests</option>
-                  <option value="3">3 Guests</option>
-                  <option value="4">4 Guests</option>
-                  <option value="5">5 Guests</option>
-                  <option value="6">6 Guests</option>
-                </select>
-              </div>
-
-              <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '10px' }}>
-                Confirm Reservation
-              </button>
-            </form>
-          )}
-        </div>
-      </section>
 
       {/* 5. Horizontal Smooth Rotating Reviews Section (Right to Left Scrolling) */}
       <section className="section" id="reviews">
         <div className="section-header">
           <span className="section-subtitle">Testimonials</span>
-          <h2 className="section-title">Verified Diners Reviews</h2>
+          <h2 className="section-title">Verified Cafe Guest Reviews</h2>
           <p>What our guests say about their high-altitude gastronomic journey.</p>
         </div>
         
@@ -558,6 +452,35 @@ function App() {
             ))}
           </div>
         </div>
+
+        <div style={{ textAlign: 'center', marginTop: '40px' }}>
+          <a 
+            href={GOOGLE_REVIEWS_URL} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="btn-primary"
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '10px',
+              padding: '12px 30px', 
+              fontSize: '11px', 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.1em',
+              borderColor: 'var(--text-primary)',
+              background: 'transparent',
+              color: 'var(--text-primary)'
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.53-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-8.83z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.11 0-5.74-2.11-6.68-4.96H1.21v3.15C3.18 21.88 7.31 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.32 14.24A7.16 7.16 0 0 1 5 12c0-.79.13-1.57.32-2.34V6.51H1.21A11.94 11.94 0 0 0 0 12c0 1.92.45 3.74 1.21 5.49l4.11-3.25z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.18 2.12 1.21 5.49l4.11 3.25c.94-2.85 3.57-4.99 6.68-4.99z"/>
+            </svg>
+            Read & Write Reviews on Google
+          </a>
+        </div>
       </section>
 
       {/* 6. Location Map Section */}
@@ -588,16 +511,8 @@ function App() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <h3 style={{ fontSize: '24px', color: 'var(--text-primary)' }}>Tavern Opening Hours</h3>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '10px' }}>
-              <span>Wednesday – Friday</span>
-              <strong>16:00 – 23:00</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: '10px' }}>
-              <span>Saturday – Sunday</span>
-              <strong>12:00 – 23:30</strong>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '10px', color: 'var(--text-secondary)' }}>
-              <span>Monday – Tuesday</span>
-              <span>Closed (Peak Maintenance)</span>
+              <span>Monday – Sunday (Everyday)</span>
+              <strong>8:00 AM – 11:00 PM</strong>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '40px', background: 'var(--bg-secondary)', border: '1px solid var(--border-light)', borderRadius: '4px' }}>
@@ -688,16 +603,27 @@ function App() {
               >
                 Explore Menu
               </button>
-              <button 
+              <a 
+                href="tel:9988502602"
                 className="btn-primary" 
-                style={{ width: '100%', background: 'transparent', borderColor: 'var(--text-primary)', color: 'var(--text-primary)' }}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  reservationSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+                style={{ 
+                  width: '100%', 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  gap: '10px', 
+                  background: 'transparent', 
+                  borderColor: 'var(--text-primary)', 
+                  color: 'var(--text-primary)', 
+                  textDecoration: 'none',
+                  boxSizing: 'border-box'
                 }}
               >
-                Reserve Table
-              </button>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                <span>Call Tavern</span>
+              </a>
             </div>
           </div>
         </div>

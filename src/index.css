@@ -1015,4 +1015,123 @@ html.lenis, html.lenis body {
   }
 }
 
+.nav-phone-link:hover {
+  transform: scale(1.1);
+  color: var(--text-primary) !important;
+  opacity: 0.8;
+}
+
+.instagram-card:hover .instagram-overlay {
+  opacity: 1 !important;
+}
+
+.instagram-card:hover {
+  box-shadow: var(--shadow-medium);
+}
+
+/* Premium Lounge Showcase Section */
+.lounge-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.lounge-row {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.lounge-row:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.lounge-image-col {
+  width: 50%;
+  overflow: hidden;
+  position: relative;
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+}
+
+.lounge-image-wrapper {
+  aspect-ratio: 16 / 10;
+  width: 100%;
+  overflow: hidden;
+}
+
+.lounge-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lounge-image-wrapper:hover img {
+  transform: scale(1.05);
+}
+
+.lounge-content-col {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+}
+
+.lounge-vibe {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.lounge-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.lounge-description {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.lounge-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.lounge-tag {
+  font-size: 11px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  padding: 6px 14px;
+  color: var(--text-primary);
+  border-radius: 4px;
+}
+
+@media (max-width: 991px) {
+  .lounge-row {
+    flex-direction: column !important;
+    gap: 30px;
+  }
+  .lounge-image-col, .lounge-content-col {
+    width: 100%;
+  }
+  .lounge-title {
+    font-size: 26px;
+  }
+}
+
 
