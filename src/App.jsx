@@ -316,33 +316,20 @@ function App() {
           <p>Explore the stunning surroundings and culinary creations that make dining at The Fusion Lab a premium retreat.</p>
         </div>
 
-        {/* Scenic Gallery - Smooth Infinite Marquee */}
+        {/* Scenic Gallery - Premium Asymmetric Grid */}
         <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '26px', textAlign: 'center', marginBottom: '30px', color: 'var(--text-primary)' }}>
-          Mountain sceneries & Scenic Views
+          Atmospheric Peaks & Scenic Views
         </h3>
-        <div className="marquee-container" style={{ marginBottom: '80px' }}>
-          <div className="marquee-content" style={{ animationDuration: '40s' }}>
-            {scenicImages.map((img, idx) => (
-              <div key={`scenic-1-${idx}`} className="marquee-item-gallery hover-scale">
-                <div className="room-image-wrapper" style={{ height: '300px', borderRadius: '8px', boxShadow: 'var(--shadow-floating)' }}>
-                  <img src={img.url} alt={img.title} />
-                </div>
-                <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px', fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'var(--text-primary)' }}>
-                  {img.title}
-                </p>
+        <div className="scenic-grid" style={{ marginBottom: '80px' }}>
+          {scenicImages.map((img, idx) => (
+            <div key={`scenic-${idx}`} className="scenic-card">
+              <img src={img.url} alt={img.title} />
+              <div className="scenic-overlay">
+                <span className="scenic-card-subtitle">Peak Scenery</span>
+                <h4 className="scenic-card-title">{img.title}</h4>
               </div>
-            ))}
-            {scenicImages.map((img, idx) => (
-              <div key={`scenic-2-${idx}`} className="marquee-item-gallery hover-scale">
-                <div className="room-image-wrapper" style={{ height: '300px', borderRadius: '8px', boxShadow: 'var(--shadow-floating)' }}>
-                  <img src={img.url} alt={img.title} />
-                </div>
-                <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px', fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'var(--text-primary)' }}>
-                  {img.title}
-                </p>
-              </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
         {/* Gastronomy Gallery - Scroll-driven Zoom Reveal & Instagram Feed */}
